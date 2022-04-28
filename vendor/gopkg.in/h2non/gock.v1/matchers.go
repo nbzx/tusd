@@ -8,6 +8,9 @@ import (
 	"net/http"
 	"reflect"
 	"regexp"
+	"strings"
+
+	"github.com/h2non/parth"
 )
 
 // EOL represents the end of line character.
@@ -52,14 +55,20 @@ func MatchScheme(req *http.Request, ereq *Request) (bool, error) {
 // MatchHost matches the HTTP host header field of the given request.
 func MatchHost(req *http.Request, ereq *Request) (bool, error) {
 	url := ereq.URLStruct
-	if url.Host == req.URL.Host {
+	if strings.EqualFold(url.Host, req.URL.Host) {
 		return true, nil
 	}
-	return regexp.MatchString(url.Host, req.URL.Host)
+	if !ereq.Options.DisableRegexpHost {
+		return regexp.MatchString(url.Host, req.URL.Host)
+	}
+	return false, nil
 }
 
 // MatchPath matches the HTTP URL path of the given request.
 func MatchPath(req *http.Request, ereq *Request) (bool, error) {
+	if req.URL.Path == ereq.URLStruct.Path {
+		return true, nil
+	}
 	return regexp.MatchString(ereq.URLStruct.Path, req.URL.Path)
 }
 
@@ -68,18 +77,23 @@ func MatchHeaders(req *http.Request, ereq *Request) (bool, error) {
 	for key, value := range ereq.Header {
 		var err error
 		var match bool
+		var matchEscaped bool
 
 		for _, field := range req.Header[key] {
 			match, err = regexp.MatchString(value[0], field)
+			// Some values may contain reserved regex params e.g. "()", try matching with these escaped.
+			matchEscaped, err = regexp.MatchString(regexp.QuoteMeta(value[0]), field)
+
 			if err != nil {
 				return false, err
 			}
-			if match {
+			if match || matchEscaped {
 				break
 			}
+
 		}
 
-		if !match {
+		if !match && !matchEscaped {
 			return false, nil
 		}
 	}
@@ -109,6 +123,22 @@ func MatchQueryParams(req *http.Request, ereq *Request) (bool, error) {
 	return true, nil
 }
 
+// MatchPathParams matches the URL path parameters of the given request.
+func MatchPathParams(req *http.Request, ereq *Request) (bool, error) {
+	for key, value := range ereq.PathParams {
+		var s string
+
+		if err := parth.Sequent(req.URL.Path, key, &s); err != nil {
+			return false, nil
+		}
+
+		if s != value {
+			return false, nil
+		}
+	}
+	return true, nil
+}
+
 // MatchBody tries to match the request body.
 // TODO: not too smart now, needs several improvements.
 func MatchBody(req *http.Request, ereq *Request) (bool, error) {
@@ -118,7 +148,7 @@ func MatchBody(req *http.Request, ereq *Request) (bool, error) {
 	}
 
 	// Only can match certain MIME body types
-	if !supportedType(req) {
+	if !supportedType(req, ereq) {
 		return false, nil
 	}
 
@@ -184,10 +214,15 @@ func MatchBody(req *http.Request, ereq *Request) (bool, error) {
 	return false, nil
 }
 
-func supportedType(req *http.Request) bool {
+func supportedType(req *http.Request, ereq *Request) bool {
 	mime := req.Header.Get("Content-Type")
 	if mime == "" {
 		return true
+	}
+
+	mimeToMatch := ereq.Header.Get("Content-Type")
+	if mimeToMatch != "" {
+		return mime == mimeToMatch
 	}
 
 	for _, kind := range BodyTypes {

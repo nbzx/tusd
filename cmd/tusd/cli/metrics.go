@@ -3,10 +3,10 @@ package cli
 import (
 	"net/http"
 
-	"github.com/tus/tusd"
-	"github.com/tus/tusd/prometheuscollector"
-
+	"github.com/nbzx/tusd"
+	"github.com/nbzx/tusd/prometheuscollector"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var MetricsOpenConnections = prometheus.NewGauge(prometheus.GaugeOpts{
@@ -28,5 +28,5 @@ func SetupMetrics(handler *tusd.Handler) {
 	prometheus.MustRegister(prometheuscollector.New(handler.Metrics))
 
 	stdout.Printf("Using %s as the metrics path.\n", Flags.MetricsPath)
-	http.Handle(Flags.MetricsPath, prometheus.Handler())
+	http.Handle(Flags.MetricsPath, promhttp.Handler())
 }

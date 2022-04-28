@@ -6,9 +6,8 @@ import (
 
 	consul "github.com/hashicorp/consul/api"
 	consultestutil "github.com/hashicorp/consul/testutil"
+	"github.com/nbzx/tusd"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/tus/tusd"
 )
 
 func TestConsulLocker(t *testing.T) {

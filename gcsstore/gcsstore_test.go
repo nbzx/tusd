@@ -4,18 +4,19 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"golang.org/x/net/context"
 	"testing"
+
+	"golang.org/x/net/context"
 
 	"cloud.google.com/go/storage"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/tus/tusd"
-	"github.com/tus/tusd/gcsstore"
+	"github.com/nbzx/tusd"
+	"github.com/nbzx/tusd/gcsstore"
 )
 
-// go:generate mockgen -destination=./gcsstore_mock_test.go -package=gcsstore_test github.com/tus/tusd/gcsstore GCSReader,GCSAPI
+// go:generate mockgen -destination=./gcsstore_mock_test.go -package=gcsstore_test github.com/nbzx/tusd/gcsstore GCSReader,GCSAPI
 
 const mockID = "123456789abcdefghijklmnopqrstuvwxyz"
 const mockBucket = "bucket"

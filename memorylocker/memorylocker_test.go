@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sjqzhang/tusd"
+	"github.com/nbzx/tusd"
 )
 
 func TestMemoryLocker(t *testing.T) {

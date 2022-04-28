@@ -1,14 +1,15 @@
 package etcd3locker
 
 import (
-	etcd_harness "github.com/chen-anders/go-etcd-harness"
-	"go.etcd.io/etcd/clientv3"
 	"os"
 	"testing"
 	"time"
 
+	etcd_harness "github.com/chen-anders/go-etcd-harness"
+	"go.etcd.io/etcd/clientv3"
+
+	"github.com/nbzx/tusd"
 	"github.com/stretchr/testify/assert"
-	"github.com/tus/tusd"
 )
 
 func TestEtcd3Locker(t *testing.T) {

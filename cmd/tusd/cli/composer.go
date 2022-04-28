@@ -3,12 +3,12 @@ package cli
 import (
 	"os"
 
-	"github.com/tus/tusd"
-	"github.com/tus/tusd/filestore"
-	"github.com/tus/tusd/limitedstore"
-	"github.com/tus/tusd/memorylocker"
-	"github.com/tus/tusd/s3store"
-	"github.com/tus/tusd/gcsstore"
+	"github.com/nbzx/tusd"
+	"github.com/nbzx/tusd/filestore"
+	"github.com/nbzx/tusd/gcsstore"
+	"github.com/nbzx/tusd/limitedstore"
+	"github.com/nbzx/tusd/memorylocker"
+	"github.com/nbzx/tusd/s3store"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"

@@ -18,7 +18,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/tus/tusd"
+	"github.com/nbzx/tusd"
 )
 
 type LimitedStore struct {

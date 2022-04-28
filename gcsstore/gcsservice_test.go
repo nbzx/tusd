@@ -2,13 +2,14 @@ package gcsstore_test
 
 import (
 	"bytes"
-	"golang.org/x/net/context"
 	"testing"
+
+	"golang.org/x/net/context"
 
 	"gopkg.in/h2non/gock.v1"
 
 	"cloud.google.com/go/storage"
-	. "github.com/tus/tusd/gcsstore"
+	. "github.com/nbzx/tusd/gcsstore"
 	"google.golang.org/api/option"
 )
 

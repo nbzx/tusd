@@ -23,8 +23,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/sjqzhang/tusd"
-	"github.com/sjqzhang/tusd/uid"
+	"github.com/nbzx/tusd"
+	"github.com/nbzx/tusd/uid"
 
 	"gopkg.in/Acconut/lockfile.v1"
 )
@@ -46,9 +46,9 @@ type FileStore struct {
 // whether the path exists, use os.MkdirAll to ensure.
 // In addition, a locking mechanism is provided.
 func New(path string) FileStore {
-	store:= FileStore{Path:path}
+	store := FileStore{Path: path}
 	//modify by sjqzhang
-	store.GetReaderExt= func(id string) (io.Reader, error) {
+	store.GetReaderExt = func(id string) (io.Reader, error) {
 		return os.Open(store.binPath(id))
 	}
 	return store
@@ -68,7 +68,6 @@ func (store FileStore) UseIn(composer *tusd.StoreComposer) {
 func (store FileStore) NewUpload(info tusd.FileInfo) (id string, err error) {
 	id = uid.Uid()
 	info.ID = id
-
 
 	// Create .bin file with no content
 	file, err := os.OpenFile(store.binPath(id), os.O_CREATE|os.O_WRONLY, defaultFilePerm)
@@ -115,9 +114,10 @@ func (store FileStore) GetInfo(id string) (tusd.FileInfo, error) {
 
 	return info, nil
 }
+
 // modify by sjqzhang
 func (store FileStore) GetReader(id string) (io.Reader, error) {
-	if store.GetReaderExt!=nil {
+	if store.GetReaderExt != nil {
 		return store.GetReaderExt(id)
 	}
 	return os.Open(store.binPath(id))
